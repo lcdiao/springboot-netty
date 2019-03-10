@@ -22,7 +22,7 @@ public class ChatServerApplication {
 
     public void start() throws Exception{
         System.out.println("netty启动");
-        channel = serverBootstrap.bind(8888).sync().channel().closeFuture().sync().channel();
+        channel = serverBootstrap.bind(8889).sync().channel().closeFuture().sync().channel();
     }
 
     @PreDestroy

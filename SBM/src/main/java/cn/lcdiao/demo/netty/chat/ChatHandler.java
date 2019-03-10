@@ -40,18 +40,25 @@ public class ChatHandler extends SimpleChannelInboundHandler<TextWebSocketFrame>
 //        }
         String json = textWebSocketFrame.text();
         JSONObject jsonObject = JSON.parseObject(json);
-        int id = (int)jsonObject.get("id");
-        int toid = (int)jsonObject.get("toid");
-        String message = (String)jsonObject.get("message");
+        if(!jsonObject.containsKey("toid")){
+            int id = (int) jsonObject.get("id");
+            Channel iChannel = channelHandlerContext.channel();
+            m.put(id, iChannel);
+            System.out.println("添加成功");
+        }else {
+            int id = (int) jsonObject.get("id");
+            int toid = (int) jsonObject.get("toid");
+            String message = (String) jsonObject.get("message");
 
-        Channel iChannel = channelHandlerContext.channel();
-        m.put(id,iChannel);
+            Channel iChannel = channelHandlerContext.channel();
+            m.put(id, iChannel);
 
-        Channel toChannel = m.get(toid);
-        if(toChannel == null || !toChannel.isOpen()){
-            iChannel.writeAndFlush(new TextWebSocketFrame("系统通知：对方未上线!"));
-        }else{
-            toChannel.writeAndFlush(new TextWebSocketFrame(id+"：" +message));
+            Channel toChannel = m.get(toid);
+            if (toChannel == null || !toChannel.isOpen()) {
+                iChannel.writeAndFlush(new TextWebSocketFrame("系统通知：对方未上线!"));
+            } else {
+                toChannel.writeAndFlush(new TextWebSocketFrame(id + "：" + message));
+            }
         }
 
     }

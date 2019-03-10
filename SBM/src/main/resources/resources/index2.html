@@ -20,7 +20,7 @@
         //连接一旦建立成功，执行
         socket.onopen = function (ev) {
             if(socket.readyState == WebSocket.OPEN) {
-                socket.send("{id:1}");
+                socket.send("{id:2}");
             }
             var ta = document.getElementById("responseText");
             ta.value = "连接开启!";
@@ -48,7 +48,7 @@
 </script>
 
     <form onsubmit="return false;">
-        <input name="id1" value="1"/>to<input name="id2" value="2"/><br/>
+        <input name="id1" value="2"/>to<input name="id2" value="1"/><br/>
         <textarea name="message" style="width: 400px; height: 200px"></textarea>
 
         <input type="button" value="发送数据" onclick="send(this.form.id1.value,this.form.id2.value,this.form.message.value)">

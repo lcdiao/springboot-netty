@@ -22,6 +22,8 @@ public class WebSocketHandler extends ChannelInboundHandlerAdapter{
 
     WebSocketServerHandshaker handshaker;
 
+
+
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
 
@@ -43,6 +45,9 @@ public class WebSocketHandler extends ChannelInboundHandlerAdapter{
             }
 
             WebSocketServerHandshakerFactory webSocketServerHandshakerFactory = new WebSocketServerHandshakerFactory("ws://localhost:8888/websocket",null,false);
+
+//            String uri = request.uri();
+//            System.out.println(uri);
 
             handshaker = webSocketServerHandshakerFactory.newHandshaker(request);
 
