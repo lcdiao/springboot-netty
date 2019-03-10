@@ -20,8 +20,8 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class ChatServer {
 
-//    @Autowired
-//    WebSocketHandler webSocketHandler;
+    @Autowired
+    WebSocketHandler webSocketHandler;
 
     @Autowired
     ChatHandler chatHandler;
@@ -51,10 +51,10 @@ public class ChatServer {
                             //将多条http整合为一条
                             socketChannel.pipeline().addLast(new HttpObjectAggregator(65536));
                             //
-                            socketChannel.pipeline().addLast(new WebSocketServerProtocolHandler("/websocket"));
+                            //socketChannel.pipeline().addLast(new WebSocketServerProtocolHandler("/websocket"));
                             //简单实现上面的handler(websocket的握手操作)
-                            //socketChannel.pipeline().addLast(webSocketHandler);
-                            socketChannel.pipeline().addLast(chatHandler);
+                            socketChannel.pipeline().addLast(webSocketHandler);
+                            //socketChannel.pipeline().addLast(chatHandler);
                         }
                     })
                 .option(ChannelOption.SO_BACKLOG,100)

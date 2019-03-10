@@ -9,7 +9,7 @@
     var socket;
     if(window.WebSocket){
         //与服务器端连接的具体地址
-        socket = new WebSocket("ws://localhost:8888/websocket/1");
+        socket = new WebSocket("ws://localhost:8888/websocket/2");
         //如果客户端接收到服务端发送的消息，onmessage就会被调用，相当于服务端的channelRead0方法
         socket.onmessage = function (ev) {
             var ta = document.getElementById("responseText");
@@ -44,7 +44,7 @@
 </script>
 
     <form onsubmit="return false;">
-        <input name="id1" value="1"/>to<input name="id2" value="2"/><br/>
+        <input name="id1" value="2"/>to<input name="id2" value="1"/><br/>
         <textarea name="message" style="width: 400px; height: 200px"></textarea>
 
         <input type="button" value="发送数据" onclick="send(this.form.id2.value,this.form.message.value)">
