@@ -9,6 +9,7 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
+import io.netty.util.AttributeKey;
 import io.netty.util.concurrent.GlobalEventExecutor;
 import org.springframework.stereotype.Component;
 
@@ -29,38 +30,45 @@ public class ChatHandler extends SimpleChannelInboundHandler<TextWebSocketFrame>
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, TextWebSocketFrame textWebSocketFrame) throws Exception {
 
-//        String content = textWebSocketFrame.text();
-//        Channel iChannel = channelHandlerContext.channel();
-//        for (Channel channel : channelGroup){
-//            if (channel != iChannel){
-//                channel.writeAndFlush(new TextWebSocketFrame(channelHandlerContext.channel().remoteAddress() + ":" +content));
-//            } else {
-//                channel.writeAndFlush(new TextWebSocketFrame("我自己：" + content));
-//            }
-//        }
-        String json = textWebSocketFrame.text();
-        JSONObject jsonObject = JSON.parseObject(json);
-        int id = (int)jsonObject.get("id");
-        int toid = (int)jsonObject.get("toid");
-        String message = (String)jsonObject.get("message");
-
+        String content = textWebSocketFrame.text();
+        System.out.println(content);
         Channel iChannel = channelHandlerContext.channel();
-        m.put(id,iChannel);
-
-        Channel toChannel = m.get(toid);
-        if(toChannel == null || !toChannel.isOpen()){
-            iChannel.writeAndFlush(new TextWebSocketFrame("系统通知：对方未上线!"));
-        }else{
-            toChannel.writeAndFlush(new TextWebSocketFrame(id+"：" +message));
+        for (Channel channel : channelGroup){
+            if (channel != iChannel){
+                channel.writeAndFlush(new TextWebSocketFrame(channelHandlerContext.channel().remoteAddress() + ":" +content));
+            } else {
+                channel.writeAndFlush(new TextWebSocketFrame("我自己：" + content));
+            }
         }
+//        String json = textWebSocketFrame.text();
+//        JSONObject jsonObject = JSON.parseObject(json);
+//        int id = (int)jsonObject.get("id");
+//        int toid = (int)jsonObject.get("toid");
+//        String message = (String)jsonObject.get("message");
+//
+//        Channel iChannel = channelHandlerContext.channel();
+//        m.put(id,iChannel);
+//
+//        Channel toChannel = m.get(toid);
+//        if(toChannel == null || !toChannel.isOpen()){
+//            iChannel.writeAndFlush(new TextWebSocketFrame("系统通知：对方未上线!"));
+//        }else{
+//            toChannel.writeAndFlush(new TextWebSocketFrame(id+"：" +message));
+//        }
 
     }
 
 
+    @Override
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        System.out.println("lalala");
+    }
 
     //进入
     @Override
     public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
+        System.out.println("有人加入");
+
         for(Channel channel : channelGroup){
             channel.writeAndFlush(new TextWebSocketFrame("系统通知：" +ctx.channel().remoteAddress() + "进入聊天室"));
         }
@@ -71,9 +79,11 @@ public class ChatHandler extends SimpleChannelInboundHandler<TextWebSocketFrame>
     //退出
     @Override
     public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {
+        System.out.println("退出加入");
         channelGroup.remove(ctx.channel());
         for(Channel channel : channelGroup){
             channel.writeAndFlush(new TextWebSocketFrame("系统通知：" +ctx.channel().remoteAddress() + "退出聊天室"));
         }
+
     }
 }

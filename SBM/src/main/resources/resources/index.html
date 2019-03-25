@@ -31,12 +31,12 @@
         alert('浏览器不支持WebSocket!');
     }
 
-    function send(toid,message) {
+    function send(id,toid,message) {
         if(!window.WebSocket){
             return;
         }
         if(socket.readyState == WebSocket.OPEN){
-            socket.send("{\"toid\":\""+toid+"\",\"message\":\""+message+"\"}");
+            socket.send("{\"id\":\""+id+"\",\"toid\":\""+toid+"\",\"message\":\""+message+"\"}");
         }else{
             alert("连接尚未开启！");
         }
@@ -47,7 +47,7 @@
         <input name="id1" value="1"/>to<input name="id2" value="2"/><br/>
         <textarea name="message" style="width: 400px; height: 200px"></textarea>
 
-        <input type="button" value="发送数据" onclick="send(this.form.id2.value,this.form.message.value)">
+        <input type="button" value="发送数据" onclick="send(this.form.id1.value,this.form.id2.value,this.form.message.value)">
 
         <h3>服务端输出:</h3>
 

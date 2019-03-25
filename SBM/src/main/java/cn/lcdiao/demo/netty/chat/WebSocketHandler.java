@@ -34,8 +34,6 @@ public class WebSocketHandler extends ChannelInboundHandlerAdapter{
     private static ChannelGroup channelGroup = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
     private static Map<String,Channel> onlineUser = new HashMap<>();
 
-    private String id;
-
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
 
@@ -63,9 +61,10 @@ public class WebSocketHandler extends ChannelInboundHandlerAdapter{
             //System.out.println(uri);
             String[] as = uri.split("/");
             //System.out.println(as[as.length-1]);
-            id = as[as.length-1];
+            String id = as[as.length-1];
             request.setUri(uri.substring(0,id.length()));
             //System.out.println(request.uri());
+            //添加进onlineUser
             onlineUser.put(id,ctx.channel());
 
             handshaker = webSocketServerHandshakerFactory.newHandshaker(request);
@@ -81,9 +80,11 @@ public class WebSocketHandler extends ChannelInboundHandlerAdapter{
             }
             if (msg instanceof TextWebSocketFrame){
                 String json = ((TextWebSocketFrame)msg).text();
+                System.out.println(json);
                 JSONObject jsonObject = JSON.parseObject(json);
+                String id = jsonObject.getString("id");
                 String toid = jsonObject.getString("toid");
-                String message = (String)jsonObject.get("message");
+                String message = jsonObject.getString("message");
 
                 Channel iChannel = ctx.channel();
 
@@ -110,7 +111,6 @@ public class WebSocketHandler extends ChannelInboundHandlerAdapter{
     @Override
     public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {
         channelGroup.remove(ctx.channel());
-        onlineUser.remove(id);
         for(Channel channel : channelGroup){
             channel.writeAndFlush(new TextWebSocketFrame("系统通知：" +ctx.channel().remoteAddress() + "退出聊天室"));
         }
